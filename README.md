@@ -2,17 +2,22 @@
 
 Manage your vagrants by cli.
 
+## Installing
+
+download the [vagragross.phar](https://github.com/janw-oostendorp/Vagragross/releases/download/1.0/vagragross.phar)
+
+
 ## Usage
 
-`./vagragross`
+`php ./vagragross.phar`
 
 Will list all vagrants
 
-`./vagragross --listids`
+`php ./vagragross.phar --listids`
 
 List all vagrants and their VB id and vagrant id (they are not the same)
 
-`./vagragross --halt`
+`php ./vagragross.phar --halt`
 
 Halt all running vagrants
 
