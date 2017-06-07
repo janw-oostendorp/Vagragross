@@ -1,5 +1,5 @@
-#!/usr/bin/env php
 <?php
+namespace vagragross;
 /**
  * @package    vagragross
  * @author     Janw Oostendorp <janw.me>
@@ -9,8 +9,6 @@
  * @link       https://github.com/janw-oostendorp/Vagragross
  * @since      0.9
  */
-
-namespace vagragross;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/includes/MainCommand.php';
