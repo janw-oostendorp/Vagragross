@@ -114,10 +114,11 @@ class Virtualbox
      */
     protected function fillVagrantId($box_root_path = null)
     {
-        if (is_null($box_root_path) && !is_null($this->vagrant_path)) {
-            $box_root_path = $this->vagrant_path;
+        if (is_null($box_root_path) && !is_null($this->getVagrantPath())) {
+            $box_root_path = $this->getVagrantPath();
         } else {
-            throw new \Exception('no path given');
+            $this->setIsVagrant(false);
+            return $this;
         }
 
         $dir_list = glob("$box_root_path/.vagrant/machines/*", GLOB_ONLYDIR);
@@ -128,6 +129,10 @@ class Virtualbox
         }
 
         $vagrand_id_file = "{$dir_list[0]}/virtualbox/index_uuid";
+        if (!file_exists($vagrand_id_file)){
+            return $this;
+        }
+
         $id = file_get_contents($vagrand_id_file);
         if (!empty($id)) {
             $this->setIsVagrant(true);

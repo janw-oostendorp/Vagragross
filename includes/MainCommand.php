@@ -30,7 +30,7 @@ class MainCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('manage')
+            ->setName('vagragross')
             // the short description shown while running "php bin/console list"
             ->setDescription('List current running vagrants')
             // the full command description shown when running the command with
@@ -61,10 +61,10 @@ class MainCommand extends Command
 
             // not a vagrant?
             if (!$virtualbox->isVagrant()) {
-                $name = '<fg=red>' . str_pad($virtualbox->getName(), 24) . '</>';
-            } else {
-                $name = '<fg=white>' . str_pad($virtualbox->getName(), 24) . '</>';
+                continue;
             }
+
+            $name = '<fg=white>' . str_pad($virtualbox->getName(), 24) . '</>';
 
             // status
             switch ($virtualbox->getStatus()) :
@@ -88,7 +88,7 @@ class MainCommand extends Command
                 $id = "<fg=cyan>{$virtualbox->getUuid()}</>";
 
                 if (!$virtualbox->getVagrantId()) {
-                    $id .= " <fg=red>Unknown</>";
+                    $id .= " <fg=red>Broken?</>";
                 } else {
                     $id .= " <fg=blue>{$virtualbox->getVagrantId()}</>";
                 }
@@ -98,9 +98,12 @@ class MainCommand extends Command
             // add output
             $output->writeln("{$name} {$status} {$id}");
 
-            if ($input->getOption('halt')) {
+            if ($input->getOption('halt') && 'running' === $virtualbox->getStatus()) {
+                $output->writeln(str_repeat(' ', 25) . '<fg=green>Trying to turn down the machine</>');
                 if ($virtualbox->haltVagrant()) {
                     $output->writeln(str_repeat(' ', 25) . '<fg=green>Halted</>');
+                } else {
+                    $output->writeln(str_repeat(' ', 25) . '<fg=green>Can\'t halt</>');
                 }
             }
         }

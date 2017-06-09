@@ -9,6 +9,15 @@ define('PHAR_FILE', 'vagragross.phar');
 define('SOURCE_ROOT', realpath(__DIR__));
 define('PHAR_PATH', SOURCE_ROOT . DIRECTORY_SEPARATOR . PHAR_FILE);
 
+// allowed to create phar file?
+if (ini_get('phar.readonly') == true ) {
+    if (false === ini_set('phar.readonly', 0)) {
+        echo "settings don't allow the creation of a phar file.\n";
+        echo "Change 'phar.readonly' to 0.\n";
+        exit("");
+    }
+}
+
 // class to whitelist files. Whitelisting will be more accurate then black listing
 class MyRecursiveFilterIterator extends RecursiveFilterIterator
 {

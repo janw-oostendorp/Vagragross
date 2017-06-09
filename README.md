@@ -25,3 +25,4 @@ Halt all running vagrants
 
 - starting a vagrant?
 - better crossplatform support?
+- better details
