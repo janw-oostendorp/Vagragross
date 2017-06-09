@@ -40,10 +40,10 @@ class MainCommand extends Command
         $this->setDefinition(new InputDefinition([
             new InputOption('halt', '', null, 'halt all running boxes'),
             new InputOption(
-                'listids',
-                'i',
+                'details',
+                'd',
                 null,
-                'Add the Virtualbox UIID and Vagrant id of the boxes to the output'
+                'List details of the box'
             ),
         ]));
 
@@ -55,6 +55,7 @@ class MainCommand extends Command
         $virtual_box_list = explode("\n", trim(shell_exec('VBoxManage list vms')));
 
         foreach ($virtual_box_list as $virtual_box_row) {
+            $writeln = [];
             $virtualbox = new Virtualbox(
                 $this->extractVirtualboxUIID($virtual_box_row)
             );
@@ -64,7 +65,12 @@ class MainCommand extends Command
                 continue;
             }
 
-            $name = '<fg=white>' . str_pad($virtualbox->getName(), 24) . '</>';
+            if ($input->getOption('details')) {
+                $writeln[] = '<fg=magenta>' . str_repeat('=', 65) . '</>';
+            }
+
+
+            $name = '<fg=magenta>' . str_pad($virtualbox->getName(), 24) . '</>';
 
             // status
             switch ($virtualbox->getStatus()) :
@@ -82,21 +88,30 @@ class MainCommand extends Command
                     break;
             endswitch;
 
-            // should add id?
-            $id = '';
-            if ($input->getOption('listids')) {
-                $id = "<fg=cyan>{$virtualbox->getUuid()}</>";
+            $writeln[] = "{$name} {$status}";
+
+
+            if ($input->getOption('details')) {
+//                $writeln[] =;
+
+                $writeln[] = '<fg=cyan>' . str_pad('VB id ', 25, ' ', STR_PAD_LEFT)
+                    . $virtualbox->getUuid();
 
                 if (!$virtualbox->getVagrantId()) {
-                    $id .= " <fg=red>Broken?</>";
+                    $writeln[] = str_pad('vagrant id ', 25, ' ', STR_PAD_LEFT)
+                        . "<fg=red>Broken?</>";
                 } else {
-                    $id .= " <fg=blue>{$virtualbox->getVagrantId()}</>";
+                    $writeln[] = str_pad('vagrant id ', 25, ' ', STR_PAD_LEFT)
+                        . $virtualbox->getVagrantId();
                 }
 
+                $writeln[] = str_pad('Vagrant root ', 25, ' ', STR_PAD_LEFT)
+                    . $virtualbox->getVagrantPath() . '</>';
             }
 
-            // add output
-            $output->writeln("{$name} {$status} {$id}");
+            // add output so far
+            $output->writeln($writeln);
+
 
             if ($input->getOption('halt') && 'running' === $virtualbox->getStatus()) {
                 $output->writeln(str_repeat(' ', 25) . '<fg=green>Trying to turn down the machine</>');
