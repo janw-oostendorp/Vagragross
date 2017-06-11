@@ -54,6 +54,8 @@ class MainCommand extends Command
         // get list of all virtual boxes
         $virtual_box_list = explode("\n", trim(shell_exec('VBoxManage list vms')));
 
+        sort($virtual_box_list);
+
         foreach ($virtual_box_list as $virtual_box_row) {
             $writeln = [];
             $virtualbox = new Virtualbox(
