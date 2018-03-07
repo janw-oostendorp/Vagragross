@@ -55,6 +55,12 @@ class Virtualbox
         return $this;
     }
 
+    /**
+     * @param null $virtual_box_uiid
+     *
+     * @return $this
+     * @throws \Exception
+     */
     protected function fillRawDetails($virtual_box_uiid = null)
     {
         if (is_null($virtual_box_uiid) && !empty($this->getUuid())) {
@@ -110,7 +116,9 @@ class Virtualbox
 
     /**
      * @param null $box_root_path
+     *
      * @return $this
+     * @throws \Exception
      */
     protected function fillVagrantId($box_root_path = null)
     {
@@ -125,12 +133,12 @@ class Virtualbox
 
         // there should be 1 directory no more no less
         if (1 != count($dir_list)) {
-            return $this;
+            throw new \Exception("Multiple machines found for {$this->getName()}");
         }
 
         $vagrand_id_file = "{$dir_list[0]}/virtualbox/index_uuid";
         if (!file_exists($vagrand_id_file)){
-            return $this;
+            throw new \Exception("No vagrant uuid file found for {$this->getName()}");
         }
 
         $id = file_get_contents($vagrand_id_file);

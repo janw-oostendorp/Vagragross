@@ -58,9 +58,14 @@ class MainCommand extends Command
 
         foreach ($virtual_box_list as $virtual_box_row) {
             $writeln = [];
-            $virtualbox = new Virtualbox(
-                $this->extractVirtualboxUIID($virtual_box_row)
-            );
+            try {
+                $virtualbox = new Virtualbox(
+                    $this->extractVirtualboxUIID($virtual_box_row)
+                );
+            } catch (\Exception $e) {
+                $output->writeln("<error>{$e->getMessage()}</error>");
+                continue;
+            }
 
             // not a vagrant?
             if (!$virtualbox->isVagrant()) {
